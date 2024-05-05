@@ -58,3 +58,42 @@ class VerifyExpense(APIView):
             print(f"user_email : {email} , email_content : {message}")
             return Response({"data": "update successfull"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddExpenseWorkFlowAPI(APIView):
+
+    def post(self, request: Request, format=None):
+        serializer = serializers.AddExpenseWorkFlowSerializer(data=request.data)
+
+        print(request.data)
+
+        if serializer.is_valid():
+
+            created_data = models.ExpenseFlow.objects.create(
+                name=serializer.validated_data["name"],
+                description=serializer.validated_data["description"],
+                category_type=serializer.validated_data["category_type"],
+                approval_type=serializer.validated_data["approval_type"],
+                condition=(
+                    serializer.validated_data["condition"]
+                    if "condition" in serializer.validated_data
+                    else None
+                ),
+                amount=(
+                    serializer.validated_data["amount"]
+                    if "amount" in serializer.validated_data
+                    else 0
+                ),
+                approvers=serializer.validated_data["approvers"],
+                alert_type=serializer.validated_data["alert_type"],
+                alert_recipients=serializer.validated_data["alert_recipients"],
+                content=serializer.validated_data["content"],
+            )
+            created_data.save()
+
+            print(created_data)
+
+            return Response(
+                {"data": "expense added successfully"}, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

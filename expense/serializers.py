@@ -12,6 +12,19 @@ class AddExpenseSerializer(serializers.Serializer):
     approver = serializers.CharField()
 
 
+class AddExpenseWorkFlowSerializer(serializers.Serializer):
+    name = serializers.CharField(required=True)
+    description = serializers.CharField(required=True)
+    category_type = serializers.CharField(required=True)
+    approval_type = serializers.CharField(required=True)
+    condition = serializers.CharField(required=False)
+    amount = serializers.IntegerField(required=False)
+    approvers = serializers.ListField(child=serializers.CharField(required=True))
+    alert_type = serializers.CharField(required=True)
+    alert_recipients = serializers.ListField(child=serializers.CharField(required=True))
+    content = serializers.CharField(required=True)
+
+
 class GetExpenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Expense
